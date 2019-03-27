@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +11,8 @@ public class Waypoint : MonoBehaviour
     public bool pathFound = false;
     public Waypoint exploredFrom;
 
+    [HideInInspector]
+    public Color currentColor;
 
 
 
@@ -18,23 +20,23 @@ public class Waypoint : MonoBehaviour
     bool mouseReleased = false;
     bool mouseOver = false;
 
-     Color startColor = Color.red;
-     Color selectedColor = Color.blue;
+    Color startColor = Color.red;
+    Color selectedColor = Color.blue;
 
 
 
 
-    
-    
 
-    
 
-    
-   
 
- 
 
-   
+
+
+
+
+
+
+
 
 
 
@@ -48,7 +50,7 @@ public class Waypoint : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0))
         {
             mouseClicked = true;
             mouseOver = false;
@@ -60,8 +62,8 @@ public class Waypoint : MonoBehaviour
             mouseReleased = true;
             mouseOver = false;
         }
-        
-        
+
+
     }
 
     public Vector2Int GetGridPos()
@@ -85,7 +87,7 @@ public class Waypoint : MonoBehaviour
     {
         MeshRenderer topMeshRenderer = transform.Find("top").GetComponent<MeshRenderer>();
         topMeshRenderer.material.color = color;
-        Debug.Log("this method Called");
+        currentColor = color;
     }
 
     void OnMouseOver()
@@ -93,10 +95,10 @@ public class Waypoint : MonoBehaviour
 
 
         mouseOver = true;
-        if (mouseOver && !mouseClicked && !mouseReleased )
-        { 
-        MeshRenderer topMeshRenderer = gameObject.transform.Find("top").GetComponent<MeshRenderer>();
-        topMeshRenderer.material.color = Color.blue;
+        if (mouseOver && !mouseClicked && !mouseReleased)
+        {
+            MeshRenderer topMeshRenderer = gameObject.transform.Find("top").GetComponent<MeshRenderer>();
+            topMeshRenderer.material.color = Color.blue;
 
         }
 
@@ -105,7 +107,7 @@ public class Waypoint : MonoBehaviour
 
     }
 
-    
+
 
     private void OnMouseExit()
     {
@@ -116,9 +118,9 @@ public class Waypoint : MonoBehaviour
             topMeshRenderer.material.color = startColor;
         }
 
-        
-        
-       
+
+
+
 
 
     }
