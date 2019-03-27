@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,7 +11,7 @@ public class PathFinder : MonoBehaviour
     public Queue<Waypoint> queue = new Queue<Waypoint>();
     bool isRunning = true;
     public Waypoint searchCenter;
-    
+
     public List<List<Waypoint>> paths = new List<List<Waypoint>>();
 
     Vector2Int[] directions = {
@@ -33,10 +33,10 @@ public class PathFinder : MonoBehaviour
     {
         ClickToSelectStartPoint();
         ClickToSelectEndPoint();
-        
-       // CalculatePath();
+
+        // CalculatePath();
         // ColorThePath(path);
-        
+
     }
 
     void ColorThePath(List<Waypoint> path)
@@ -45,43 +45,77 @@ public class PathFinder : MonoBehaviour
         {
             wp.SetTopColor(Color.cyan);
         }
+        CalculateIntersectingPaths(path);
+    }
+
+    void CalculateIntersectingPaths(List<Waypoint> path)
+    {
+        foreach (List<Waypoint> p in paths)
+        {
+            if (p == path) continue;
+            HashSet<Waypoint> set1 = new HashSet<Waypoint>(p);
+            HashSet<Waypoint> set2 = new HashSet<Waypoint>(path);
+            set1.IntersectWith(path);
+
+            foreach (Waypoint wp in set1)
+            {
+                wp.SetTopColor(Color.yellow);
+            }
+        }
     }
 
     // Start is called before the first frame update
 
-    
+
 
     public void CalculatePath()
     {
-        
+        if (!CheckInitialPointValidity())
+        {
+            if (startWaypoint) startWaypoint.SetTopColor(Color.red);
+            if (endWaypoint) endWaypoint.SetTopColor(Color.red);
+            return;
+        }
         BreadthFirstSearch();
         paths.Add(CreatePath());
-        
+
+    }
+
+    bool CheckInitialPointValidity()
+    {
+        bool pointsDiffer = startWaypoint != endWaypoint;
+        bool pointsExist = startWaypoint != null && endWaypoint != null;
+        return pointsDiffer && pointsExist;
     }
 
     private List<Waypoint> CreatePath()
     {
-        
+
         List<Waypoint> path = new List<Waypoint>();
-        
+
         path.Add(endWaypoint);
 
         Waypoint previous = endWaypoint.exploredFrom;
-        
+
         while (previous != startWaypoint)
         {
             path.Add(previous);
             previous = previous.exploredFrom;
         }
         path.Add(startWaypoint);
-        
+
         path.Reverse();
         ColorThePath(path);
+
+        foreach (Waypoint w in grid.Values)
+        {
+            w.isExplored = false;
+        }
 
         return path;
     }
 
-    
+
 
     private void BreadthFirstSearch()
     {
@@ -94,6 +128,9 @@ public class PathFinder : MonoBehaviour
             ExploreNeighbours();
             searchCenter.isExplored = true;
         }
+
+        queue.Clear();
+        isRunning = true;
     }
 
     private void HaltIfEndFound()
@@ -134,10 +171,10 @@ public class PathFinder : MonoBehaviour
 
     public void ClickToSelectStartPoint()
     {
-        
+
         if (Input.GetMouseButtonDown(0))
         {
-            
+
             startWaypoint = null;
 
             RaycastHit hit;
@@ -169,14 +206,14 @@ public class PathFinder : MonoBehaviour
 
             }
 
-            
+
         }
-        
+
     }
 
     public void ClickToSelectEndPoint()
     {
-        
+
 
         if (Input.GetMouseButtonUp(0))
         {
@@ -205,12 +242,12 @@ public class PathFinder : MonoBehaviour
 
             }
             CalculatePath();
-            
-            
+
+
         }
 
 
-       
+
 
     }
 
